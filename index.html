@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>タイカイトラッカー — スプラトゥーン3 大会実績ダッシュボード</title>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -157,7 +158,7 @@ td { padding:9px 12px; font-size:.85rem; }
 <div id="modal-overlay" class="overlay hidden" onclick="closeModal()"></div>
 
 <footer class="footer">
-  <p class="f-txt">データ取得元: タイカイサポート (c.nintendo.com) — 最終更新: 2026-03-25 04:02:27</p>
+  <p class="f-txt">データ取得元: タイカイサポート (c.nintendo.com) — 最終更新: 2026-03-30 08:05:03</p>
 </footer>
 
 <script>
@@ -174,6 +175,8 @@ let currentPT = {...PT};
 // localStorageに上書きがある場合はそちらを優先（ブラウザでの一時変更用）
 const STORAGE_KEY = 'splatoon_tracker_admin';
 const PT_STORAGE_KEY = 'splatoon_tracker_points';
+const VERSION_KEY = 'splatoon_tracker_version';
+const EMBEDDED_VERSION = '2026-03-30 08:05:03';
 
 function getDefaultAdmin() {
   return {
@@ -187,6 +190,14 @@ function getDefaultAdmin() {
 
 function loadAdmin() {
   try {
+    // HTMLが更新されたらlocalStorageをリセットしてEMBEDDED_ADMINを使う
+    const savedVersion = localStorage.getItem(VERSION_KEY);
+    if (savedVersion !== EMBEDDED_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(PT_STORAGE_KEY);
+      localStorage.setItem(VERSION_KEY, EMBEDDED_VERSION);
+      return getDefaultAdmin();
+    }
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const cfg = JSON.parse(saved);
